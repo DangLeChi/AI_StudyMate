@@ -73,12 +73,13 @@ function TestPage() {
       </div>
 
       {pdfUrl && (
-        <div className="flex-grow flex flex-col items-center justify-center p-0">
+        <div className="flex-grow flex flex-col items-center justify-center p-0 h-full w-full">
           {/* Display the PDF iframe */}
           <iframe
             src={pdfUrl}
             title="Generated Exam PDF"
-            className="w-full h-screen border-none"
+            className="w-full h-full border-none"
+            style={{ height: '80vh', width: '80vw' }} // Adjust the height and width as needed
           />
           <button
             onClick={() => {
