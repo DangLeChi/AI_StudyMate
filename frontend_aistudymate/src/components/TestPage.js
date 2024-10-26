@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
+// import axios from "axios"; // Đã xóa dòng này
 
-const API_BASE_URL = "http://localhost:8080"; // Your base API URL
+// const API_BASE_URL = "https://duythduong-fpt-chat.hf.space"; // Your base API URL
 
 function TestPage() {
   const [selectedFile, setSelectedFile] = useState(null); // For file upload
@@ -29,21 +29,24 @@ function TestPage() {
       formData.append("file", selectedFile);
 
       // Call the index API to upload data
-      const responseIndex = await axios.post(`${API_BASE_URL}/api/v1/index/index`, formData, {
+      const responseIndex = await fetch(`https://duyduongth-studymate.hf.space/api/v1/index/index`, {
+        method: 'POST',
+        body: formData,
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Accept': 'application/json',
         },
       });
 
-      setUploadMessage(responseIndex.data.message); // Success message from index API
+      const dataIndex = await responseIndex.json();
+      setUploadMessage(dataIndex.message); // Success message from index API
 
       // Call the create_exam API to generate the PDF after successful upload
-      const responsePDF = await axios.post(`${API_BASE_URL}/api/v1/create_exam/creat_exam`, {}, {
-        responseType: "blob", // Expect a blob (PDF) in the response
+      const responsePDF = await fetch(`https://duyduongth-studymate.hf.space/api/v1/create_exam/creat_exam`, {
+        method: 'POST',
+        responseType: 'blob', // Expect a blob (PDF) in the response
       });
 
-      // Convert the blob response into a URL for display
-      const pdfBlob = new Blob([responsePDF.data], { type: "application/pdf" });
+      const pdfBlob = await responsePDF.blob();
       const pdfUrl = URL.createObjectURL(pdfBlob);
       setPdfUrl(pdfUrl); // Store the URL for rendering the PDF
 

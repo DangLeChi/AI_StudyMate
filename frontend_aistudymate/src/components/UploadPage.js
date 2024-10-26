@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080';
+// const API_BASE_URL = 'https://duythduong-fpt-chat.hf.space';
 
 function UploadPage() {
     const [file, setFile] = useState(null);
@@ -28,17 +28,21 @@ function UploadPage() {
             const formData = new FormData();
             formData.append('file', file);
             try {
-                const responseIndex = await axios.post(`${API_BASE_URL}/api/v1/index/index`, formData, {
+                const responseIndex = await fetch(`https://duyduongth-studymate.hf.space/api/v1/index/index`, {
+                    method: 'POST',
+                    body: formData,
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        'Accept': 'application/json',
                     },
                 });
-                setUploadMessage(responseIndex.data.message);
+                const dataIndex = await responseIndex.json();
+                setUploadMessage(dataIndex.message);
 
-                const responsePDF = await axios.post(`${API_BASE_URL}/api/v1/create_exam/creat_exam`, {}, {
+                const responsePDF = await fetch(`https://duyduongth-studymate.hf.space/api/v1/create_exam/creat_exam`, {
+                    method: 'POST',
                     responseType: 'blob',
                 });
-                const pdfBlob = new Blob([responsePDF.data], { type: 'application/pdf' });
+                const pdfBlob = await responsePDF.blob();
                 const pdfUrl = URL.createObjectURL(pdfBlob);
                 setPdfUrl(pdfUrl);
                 setIsUploaded(true);
@@ -57,12 +61,19 @@ function UploadPage() {
         setChatInput('');
 
         try {
-            const response = await axios.post(`${API_BASE_URL}/api/v1/chat/chitchat`, {
-                question: chatInput,
-                top_k: 3,
-                score: 0.5,
+            const response = await fetch(`https://duyduongth-studymate.hf.space/api/v1/chat/chitchat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: chatInput,
+                    top_k: 3,
+                    score: 0.5,
+                }),
             });
-            const aiMessage = { role: 'assistant', content: response.data.data, timestamp: new Date() };
+            const responseData = await response.json();
+            const aiMessage = { role: 'assistant', content: responseData.data, timestamp: new Date() };
             setChatHistory((prev) => [...prev, aiMessage]);
         } catch (error) {
             console.error('Error sending chat message:', error);
