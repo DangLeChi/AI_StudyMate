@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 // import axios from "axios"; // Đã xóa dòng này
 
-// const API_BASE_URL = "https://duythduong-fpt-chat.hf.space"; // Your base API URL
+const API_BASE_URL = "https://duyduongth-studymate.hf.space"; // Your base API URL
 
 function TestPage() {
   const [selectedFile, setSelectedFile] = useState(null); // For file upload
@@ -29,7 +29,7 @@ function TestPage() {
       formData.append("file", selectedFile);
 
       // Call the index API to upload data
-      const responseIndex = await fetch(`https://duyduongth-studymate.hf.space/api/v1/index/index`, {
+      const responseIndex = await fetch(`${API_BASE_URL}/api/v1/index/index`, {
         method: 'POST',
         body: formData,
         headers: {
@@ -41,7 +41,7 @@ function TestPage() {
       setUploadMessage(dataIndex.message); // Success message from index API
 
       // Call the create_exam API to generate the PDF after successful upload
-      const responsePDF = await fetch(`https://duyduongth-studymate.hf.space/api/v1/create_exam/creat_exam`, {
+      const responsePDF = await fetch(`${API_BASE_URL}/api/v1/create_exam/creat_exam`, {
         method: 'POST',
         responseType: 'blob', // Expect a blob (PDF) in the response
       });
@@ -62,6 +62,7 @@ function TestPage() {
     <div className="h-screen flex flex-col bg-gradient-to-b from-blue-100 to-blue-300">
       <div className="p-4">
         <h1 className="text-3xl font-bold mb-6">Upload File & Generate Exam</h1>
+        <p className="mb-4">Please upload your documents, we will create a test for you!</p> {/* Mô tả thêm */}
 
         <input type="file" onChange={handleFileChange} className="mb-4" />
         <button

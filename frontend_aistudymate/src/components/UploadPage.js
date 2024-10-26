@@ -87,6 +87,8 @@ function UploadPage() {
             <div className="bg-white w-full max-w-md rounded-lg shadow-lg flex flex-col overflow-hidden">
                 {!isUploaded ? (
                     <div className="p-4">
+                        <h1 className="text-3xl font-bold mb-6">Upload File & Generate Exam & Chat</h1> {/* Thêm thẻ H1 */}
+                        <p className="mb-4 text-gray-600">Please upload your documents, we will create a test for you and you can chat and ask us anything!</p> {/* Mô tả thêm */}
                         <form onSubmit={handleUpload} className="flex flex-col space-y-2">
                             <input type="file" onChange={handleFileChange} className="border p-2 rounded" />
                             <button
