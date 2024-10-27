@@ -5,17 +5,17 @@ function HelpPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Câu hỏi:', question);
+    console.log('Questions:', question);
   };
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Trợ giúp</h1>
+      <h1 className="text-3xl font-bold mb-6">Help</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <textarea
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Nhập câu hỏi của bạn"
+          placeholder="Do you have any questions? Let us know."
           rows="5"
           className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         />

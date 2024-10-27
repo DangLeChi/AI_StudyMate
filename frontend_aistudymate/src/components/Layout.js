@@ -25,11 +25,11 @@ function Layout() {
           <button className="language-selector" aria-label="Change language">
             <span role="img" aria-label="Globe">🌐</span> English
           </button>
-          <button className="facebook-icon" aria-label="Facebook">f</button>
-          <button className="google-icon" aria-label="Google">G</button>
-          <button className="user-icon" aria-label="User profile">
+          <a href="https://www.facebook.com/profile.php?id=61566437575147" className="facebook-icon" aria-label="Facebook" target="_blank" rel="noopener noreferrer">FaceBook</a>
+          {/* <a href="https://www.facebook.com/profile.php?id=61566437575147" className="google-icon" aria-label="Google" target="_blank" rel="noopener noreferrer">G</a> */}
+          <a href="https://www.facebook.com/profile.php?id=61566437575147" className="user-icon" aria-label="User profile" target="_blank" rel="noopener noreferrer">
             <span role="img" aria-label="User">👤</span>
-          </button>
+          </a>
           <button className="menu-icon" aria-label="Menu">
             <span role="img" aria-label="Menu">☰</span>
           </button>

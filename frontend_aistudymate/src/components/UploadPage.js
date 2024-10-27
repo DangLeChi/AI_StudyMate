@@ -38,7 +38,7 @@ function UploadPage() {
                 const dataIndex = await responseIndex.json();
                 setUploadMessage(dataIndex.message);
 
-                const responsePDF = await fetch(`https://duyduongth-studymate.hf.space/api/v1/create_exam/creat_exam`, {
+                const responsePDF = await fetch(`https://duyduongth-studymate.hf.space/api/v1/create_exam/create_exam`, {
                     method: 'POST',
                     responseType: 'blob',
                 });

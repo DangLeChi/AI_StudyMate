@@ -41,7 +41,7 @@ function TestPage() {
       setUploadMessage(dataIndex.message); // Success message from index API
 
       // Call the create_exam API to generate the PDF after successful upload
-      const responsePDF = await fetch(`${API_BASE_URL}/api/v1/create_exam/creat_exam`, {
+      const responsePDF = await fetch(`${API_BASE_URL}/api/v1/create_exam/create_exam`, {
         method: 'POST',
         responseType: 'blob', // Expect a blob (PDF) in the response
       });
@@ -72,7 +72,7 @@ function TestPage() {
           Upload and Generate Exam
         </button>
 
-        {isLoading && <p>Đang tải...</p>} {/* Loading message */}
+        {isLoading && <p>Loading...</p>} {/* Loading message */}
         {uploadMessage && <p>{uploadMessage}</p>} {/* Show upload message */}
       </div>
 
