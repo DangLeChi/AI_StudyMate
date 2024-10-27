@@ -1,31 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 
+const API_BASE_URL = 'https://duyduongth-studymate.hf.space'; // Replace with your actual API base URL
+
 function UploadPage() {
     const [files, setFiles] = useState([]);
-    const [selectedFile, setSelectedFile] = useState('');
-    const [pdfUrl, setPdfUrl] = useState('');
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [generatedPdfUrl, setGeneratedPdfUrl] = useState(null);
+    const [uploadMessage, setUploadMessage] = useState(""); // Message after uploading
+    const [isLoading, setIsLoading] = useState(false); // Loading state for APIs
     const [chatInput, setChatInput] = useState('');
     const [chatHistory, setChatHistory] = useState([]);
-    const [isLoading, setIsLoading] = useState(false); // Added loading state
     const chatboxRef = useRef(null);
 
     useEffect(() => {
-        // Fetch list of available PDFs
-        const fetchFiles = async () => {
-            try {
-                const response = await fetch('https://duyduongth-studymate.hf.space/api/v1/existed_exam/list_pdfs', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                    },
-                });
-                const data = await response.json();
-                setFiles(data.pdf_files);  // Populate files list
-            } catch (error) {
-                console.error('Error fetching PDF files:', error);
-            }
-        };
-        
+        // Fetch list of available PDFs on component mount
         fetchFiles();
     }, []);
 
@@ -36,14 +24,68 @@ function UploadPage() {
         }
     }, [chatHistory]);
 
+    const fetchFiles = async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/v1/existed_exam/list_pdfs`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+            const data = await response.json();
+            setFiles(data.pdf_files); // Populate files list
+        } catch (error) {
+            console.error('Error fetching PDF files:', error);
+        }
+    };
+
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]); // Set selected file
+    };
+
+    const uploadDataAndCreateExam = async () => {
+        if (!selectedFile) {
+            alert("Please select a file first!");
+            return;
+        }
+
+        setIsLoading(true); // Start loading
+
+        try {
+            // Create FormData object to upload file
+            const formData = new FormData();
+            formData.append("file", selectedFile);
+
+            // Call the create_exam API to generate the PDF
+            const responsePDF = await fetch(`${API_BASE_URL}/api/v1/create_exam/creat_exam_v2`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const pdfBlob = await responsePDF.blob();
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            setGeneratedPdfUrl(pdfUrl); // Store the URL for later selection
+            setUploadMessage("Exam generated successfully! You can select it from the list below.");
+
+            // Fetch the updated list of PDF files
+            await fetchFiles(); // Refresh the list of PDFs after creating an exam
+
+        } catch (error) {
+            console.error("Error during API calls:", error);
+            setUploadMessage("Failed to upload data or generate exam.");
+        } finally {
+            setIsLoading(false); // Stop loading
+        }
+    };
+
     const handleFileSelect = async (e) => {
         const selectedFilename = e.target.value;
         setSelectedFile(selectedFilename);
-    
-        // Fetch and display the selected PDF
+
+        // Fetch and display the selected existing PDF
         try {
             const response = await fetch(
-                `https://duyduongth-studymate.hf.space/api/v1/existed_exam/get-pdf?filename=${encodeURIComponent(selectedFilename)}`,
+                `${API_BASE_URL}/api/v1/existed_exam/get-pdf?filename=${encodeURIComponent(selectedFilename)}`,
                 {
                     method: 'POST',
                     headers: {
@@ -51,15 +93,15 @@ function UploadPage() {
                     },
                 }
             );
-    
+
             if (!response.ok) throw new Error("Failed to load PDF");
 
             const blob = await response.blob();
             const pdfUrl = URL.createObjectURL(blob);
-            setPdfUrl(pdfUrl);  // Set PDF URL to display in UI
+            setGeneratedPdfUrl(pdfUrl); // Set PDF URL to display in UI
         } catch (error) {
             console.error('Error fetching PDF file:', error);
-            setPdfUrl(''); // Clear PDF URL if there's an error
+            setGeneratedPdfUrl(''); // Clear PDF URL if there's an error
         }
     };
 
@@ -73,14 +115,14 @@ function UploadPage() {
         setIsLoading(true); // Start loading when sending chat message
 
         try {
-            const response = await fetch('https://duyduongth-studymate.hf.space/api/v1/chat/chitchatv2', {
+            const response = await fetch(`${API_BASE_URL}/api/v1/chat/chitchatv2`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     question: chatInput,
-                    file_name: selectedFile,
+                    file_name: selectedFile, // Use the name of the selected file
                 }),
             });
             const responseData = await response.json();
@@ -99,11 +141,23 @@ function UploadPage() {
         <div className="bg-gray-200 min-h-screen flex justify-center items-center p-4">
             <div className="bg-white w-full max-w-md rounded-lg shadow-lg flex flex-col overflow-hidden">
                 <div className="p-4">
-                    <h1 className="text-3xl font-bold mb-6">Choose Existing Exam & Chat</h1>
-                    <p className="mb-4 text-gray-600">Select an existing document to chat with our system.</p>
+                    <h1 className="text-3xl font-bold mb-6">Upload File & Generate Exam</h1>
+                    <p className="mb-4">Please upload your documents, we will create a test for you!</p>
+                    
+                    <input type="file" onChange={handleFileChange} className="mb-4" />
+                    <button
+                        onClick={uploadDataAndCreateExam}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    >
+                        Upload and Generate Exam
+                    </button>
+                    
+                    {isLoading && <p>Loading...</p>} {/* Loading message */}
+                    {uploadMessage && <p>{uploadMessage}</p>} {/* Show upload message */}
+
+                    <h2 className="text-xl mt-6 mb-4">Choose Existing Exam to Chat</h2>
                     <select
                         className="border p-2 rounded w-full mb-4"
-                        value={selectedFile}
                         onChange={handleFileSelect}
                     >
                         <option value="">Select a file</option>
@@ -115,19 +169,18 @@ function UploadPage() {
                     </select>
                 </div>
                 
-                {pdfUrl && (
+                {generatedPdfUrl && (
                     <div className="flex-grow flex flex-col items-center justify-center p-0 h-full w-full mb-4">
-                        {/* Display the PDF iframe */}
                         <iframe
-                            src={pdfUrl}
-                            title="Selected PDF"
+                            src={generatedPdfUrl}
+                            title="Exam PDF"
                             className="w-full h-full border-none"
                             style={{ height: '80vh', width: '80vw' }} // Adjust the height and width as needed
                         />
                         <button
                             onClick={() => {
                                 const link = document.createElement("a");
-                                link.href = pdfUrl;
+                                link.href = generatedPdfUrl;
                                 link.target = "_blank"; // Open in a new tab
                                 link.download = "exam_output.pdf"; // Filename for download
                                 link.click();
@@ -147,50 +200,36 @@ function UploadPage() {
                                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                             >
                                 <div
-                                    className={`flex items-end space-x-2 ${
-                                        message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''
-                                    }`}
+                                    className={`flex items-end space-x-2 ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}
                                 >
                                     <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0"></div>
                                     <div className="flex flex-col space-y-1 max-w-xs">
                                         <div
                                             className={`px-4 py-2 rounded-3xl ${
-                                                message.role === 'user'
-                                                    ? 'bg-blue-600 text-white'
-                                                    : 'bg-gray-200 text-gray-800'
+                                                message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'
                                             }`}
                                         >
                                             {message.content}
                                         </div>
                                         <span className="text-xs text-gray-500 self-start">
-                                            {new Date(message.timestamp).toLocaleTimeString([], {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                            })}
+                                            {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <form onSubmit={handleChat} className="border-t p-4 bg-white rounded-b-lg">
-                        <div className="flex space-x-2">
-                            <input
-                                type="text"
-                                value={chatInput}
-                                onChange={(e) => setChatInput(e.target.value)}
-                                className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                                placeholder="Type your message here..."
-                                disabled={isLoading}
-                            />
-                            <button
-                                type="submit"
-                                className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                disabled={!selectedFile || isLoading}  // Disable button if no file selected or loading
-                            >
-                                {isLoading ? "Sending..." : "Send"}
-                            </button>
-                        </div>
+                    <form onSubmit={handleChat} className="flex">
+                        <input
+                            type="text"
+                            value={chatInput}
+                            onChange={(e) => setChatInput(e.target.value)}
+                            placeholder="Ask a question..."
+                            className="flex-1 border rounded-l-lg px-4 py-2"
+                        />
+                        <button type="submit" className="bg-blue-600 text-white px-4 rounded-r-lg hover:bg-blue-700">
+                            Send
+                        </button>
                     </form>
                 </div>
             </div>
