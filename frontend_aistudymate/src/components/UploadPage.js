@@ -73,7 +73,7 @@ function UploadPage() {
         setIsLoading(true); // Start loading when sending chat message
 
         try {
-            const response = await fetch('https://duyduongth-studymate.hf.space/api/v1/chat/chitchat', {
+            const response = await fetch('https://duyduongth-studymate.hf.space/api/v1/chat/chitchatv2', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
