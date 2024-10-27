@@ -28,21 +28,10 @@ function TestPage() {
       const formData = new FormData();
       formData.append("file", selectedFile);
 
-      // Call the index API to upload data
-      const responseIndex = await fetch(`${API_BASE_URL}/api/v1/index/index`, {
+      // Call the create_exam API to generate the PDF directly
+      const responsePDF = await fetch(`${API_BASE_URL}/api/v1/create_exam/creat_exam_v2`, {
         method: 'POST',
-        body: formData,
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
-
-      const dataIndex = await responseIndex.json();
-      setUploadMessage(dataIndex.message); // Success message from index API
-
-      // Call the create_exam API to generate the PDF after successful upload
-      const responsePDF = await fetch(`${API_BASE_URL}/api/v1/create_exam/create_exam`, {
-        method: 'POST',
+        body: formData, // Send the form data with the file
         responseType: 'blob', // Expect a blob (PDF) in the response
       });
 
