@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { marked } from 'marked'; // Import marked
 
 const API_BASE_URL = 'https://duyduongth-studymate.hf.space'; // Replace with your actual API base URL
 
@@ -209,7 +210,7 @@ function UploadPage() {
                                                 message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'
                                             }`}
                                         >
-                                            {message.content}
+                                            <span dangerouslySetInnerHTML={{ __html: marked(message.content) }} /> {/* Render Markdown */}
                                         </div>
                                         <span className="text-xs text-gray-500 self-start">
                                             {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
