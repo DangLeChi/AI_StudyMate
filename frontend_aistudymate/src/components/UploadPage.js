@@ -138,9 +138,9 @@ function UploadPage() {
     };
 
     return (
-        <div className="bg-gray-200 min-h-screen flex justify-center items-center p-4">
-            <div className="bg-white w-full max-w-md rounded-lg shadow-lg flex flex-col overflow-hidden">
-                <div className="p-4">
+        <div className="bg-gray-200 min-h-screen flex justify-center items-center p-0"> {/* Thay đổi padding để chiếm toàn bộ màn hình */}
+            <div className="bg-white w-full h-full rounded-lg shadow-lg flex flex-col overflow-hidden" style={{ position: 'relative', top: '-100px' }}> {/* Thay đổi chiều cao để chiếm toàn bộ màn hình */}
+                <div className="p-4 flex-grow"> {/* Thêm flex-grow để chiếm không gian */}
                     <h1 className="text-3xl font-bold mb-6">Upload File & Generate Exam</h1>
                     <p className="mb-4">Please upload your documents, we will create a test for you!</p>
                     
