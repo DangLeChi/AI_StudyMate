@@ -205,13 +205,23 @@ function UploadPage() {
                                 >
                                     <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0"></div>
                                     <div className="flex flex-col space-y-1 max-w-xs">
-                                        <div
-                                            className={`px-4 py-2 rounded-3xl ${
-                                                message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'
-                                            }`}
-                                        >
-                                            <span dangerouslySetInnerHTML={{ __html: marked(message.content) }} /> {/* Render Markdown */}
-                                        </div>
+                                        {/* Separate container for user messages */}
+                                        {message.role === 'user' ? (
+                                            <div
+                                                className={`px-4 py-2 rounded-3xl bg-blue-600 text-white`}
+                                                style={{ width: '100%', margin: '0 auto' }} // Set width to 80% and center it
+                                            >
+                                                <span dangerouslySetInnerHTML={{ __html: marked(message.content) }} /> {/* Render Markdown */}
+                                            </div>
+                                        ) : (
+                                            // Separate container for assistant messages
+                                            <div
+                                                className={`px-4 py-2 rounded-3xl bg-gray-200 text-gray-800`}
+                                                style={{ width: '400%', margin: '0 auto' }} // Set width to 80% and center it
+                                            >
+                                                <span dangerouslySetInnerHTML={{ __html: marked(message.content) }} /> {/* Render Markdown */}
+                                            </div>
+                                        )}
                                         <span className="text-xs text-gray-500 self-start">
                                             {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
