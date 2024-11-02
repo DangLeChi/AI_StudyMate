@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { marked } from 'marked'; // Import marked
 
 const API_BASE_URL = 'https://duyduongth-studymate.hf.space'; // Replace with your actual API base URL
 
@@ -139,7 +140,7 @@ function UploadPage() {
 
     return (
         <div className="bg-gray-200 min-h-screen flex justify-center items-center p-0"> {/* Thay đổi padding để chiếm toàn bộ màn hình */}
-            <div className="bg-white w-full h-full rounded-lg shadow-lg flex flex-col overflow-hidden" style={{ position: 'relative', top: '-100px' }}> {/* Thay đổi chiều cao để chiếm toàn bộ màn hình */}
+            <div className="bg-white w-full h-full rounded-lg shadow-lg flex flex-col overflow-hidden" style={{ position: 'relative', top: '-20%' }}> {/* Thay đổi chiều cao để chiếm toàn bộ màn hình */}
                 <div className="p-4 flex-grow"> {/* Thêm flex-grow để chiếm không gian */}
                     <h1 className="text-3xl font-bold mb-6">Upload File & Generate Exam</h1>
                     <p className="mb-4">Please upload your documents, we will create a test for you!</p>
@@ -204,13 +205,23 @@ function UploadPage() {
                                 >
                                     <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0"></div>
                                     <div className="flex flex-col space-y-1 max-w-xs">
-                                        <div
-                                            className={`px-4 py-2 rounded-3xl ${
-                                                message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'
-                                            }`}
-                                        >
-                                            {message.content}
-                                        </div>
+                                        {/* Separate container for user messages */}
+                                        {message.role === 'user' ? (
+                                            <div
+                                                className={`px-4 py-2 rounded-3xl bg-blue-600 text-white`}
+                                                style={{ width: '100%', margin: '0 auto' }} // Set width to 80% and center it
+                                            >
+                                                <span dangerouslySetInnerHTML={{ __html: marked(message.content) }} /> {/* Render Markdown */}
+                                            </div>
+                                        ) : (
+                                            // Separate container for assistant messages
+                                            <div
+                                                className={`px-4 py-2 rounded-3xl bg-gray-200 text-gray-800`}
+                                                style={{ width: '400%', margin: '0 auto' }} // Set width to 80% and center it
+                                            >
+                                                <span dangerouslySetInnerHTML={{ __html: marked(message.content) }} /> {/* Render Markdown */}
+                                            </div>
+                                        )}
                                         <span className="text-xs text-gray-500 self-start">
                                             {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
