@@ -13,7 +13,7 @@ function StudyPlanPage() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:7860/api/v1/study_plan/create_study_plan",
+        "https://duyduongth-studymate.hf.space/api/v1/study_plan/create_study_plan",
         {
           plan_name: planName,
           plan_data: timetable,
@@ -31,7 +31,7 @@ function StudyPlanPage() {
   const handleDelete = async (planName) => {
     try {
       const response = await axios.delete(
-        `http://localhost:7860/api/v1/study_plan/delete_study_plan?plan_name=${planName}`
+        `https://duyduongth-studymate.hf.space/api/v1/study_plan/delete_study_plan?plan_name=${planName}`
       );
       setMessage(response.data.message);
       handleLoadAll(); // Refresh the list of all plans after deleting
@@ -45,12 +45,12 @@ function StudyPlanPage() {
     try {
       // Create the default study plan
       await axios.post(
-        "http://localhost:7860/api/v1/study_plan/create_default_study_plan"
+        "https://duyduongth-studymate.hf.space/api/v1/study_plan/create_default_study_plan"
       );
 
       // Load the default study plan
       const response = await axios.get(
-        "http://localhost:7860/api/v1/study_plan/load_study_plan"
+        "https://duyduongth-studymate.hf.space/api/v1/study_plan/load_study_plan"
       );
       if (response.data.timetable) {
         setTimetable(response.data.timetable);
@@ -67,7 +67,7 @@ function StudyPlanPage() {
   const handleLoadAll = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:7860/api/v1/study_plan/get_all_plan_names"
+        "https://duyduongth-studymate.hf.space/api/v1/study_plan/get_all_plan_names"
       );
       if (response.data.plan_names) {
         setAllPlans(response.data.plan_names);
@@ -85,7 +85,7 @@ function StudyPlanPage() {
   const handleSelectPlan = async (planName) => {
     try {
       const response = await axios.get(
-        `http://localhost:7860/api/v1/study_plan/load_study_plan?plan_name=${planName}`
+        `https://duyduongth-studymate.hf.space/api/v1/study_plan/load_study_plan?plan_name=${planName}`
       );
       if (response.data.timetable) {
         setTimetable(response.data.timetable);
@@ -102,7 +102,7 @@ function StudyPlanPage() {
   const handleEdit = async (planName) => {
     try {
       const response = await axios.get(
-        `http://localhost:7860/api/v1/study_plan/load_study_plan?plan_name=${planName}`
+        `https://duyduongth-studymate.hf.space/api/v1/study_plan/load_study_plan?plan_name=${planName}`
       );
       if (response.data.timetable) {
         setTimetable(response.data.timetable);
